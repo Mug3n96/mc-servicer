@@ -97,6 +97,10 @@ stopService () {
   fi
 }
 
+disableService () {
+  echo "disable"
+}
+
 listService () {
   if [ -f "/etc/systemd/system/mc-$1.service" ]; then
     var=$(systemctl status "mc-$1.service" | grep "Active: active")
