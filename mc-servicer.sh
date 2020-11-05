@@ -10,24 +10,31 @@ stopmsg="Server wird in `expr 300 / 60` min runtergefahren!"
 # define servers here --
 
 declare -A server0=(
-  [path]="/home/gameservers/nelltopia2"
-  [script]="./run.sh"
-  [name]="nelltopia2"
+  [path]="/home/gameservers/nelltopia"
+  [script]="./run"
+  [name]="nelltopia"
   [description]="Nellis Minecraft Server"
 )
 
 declare -A server1=(
-  [path]="/home/gameservers/egalmc"
-  [script]="./run.sh"
-  [name]="egalmc"
-  [description]="Auch Nellis Minecraft Server"
-)
-
-declare -A server3=(
   [path]="/home/gameservers/trijana"
   [script]="./run.sh"
   [name]="trijana"
   [description]="Trians und Janas Server"
+)
+
+declare -A server2=(
+  [path]="/home/gameservers/Johto"
+  [script]="./run.sh"
+  [name]="Johto"
+  [description]="Janas Server mit Kati"
+)
+
+declare -A server3=(
+  [path]="/home/gameservers/nellywithmods"
+  [script]="./run.sh"
+  [name]="nellywithmods"
+  [description]="nellys server mit mods"
 )
 
 # define section end --
@@ -72,10 +79,11 @@ enableService () {
 
 startService () {
   if [ -f "/etc/systemd/system/mc-$1.service" ]; then
+    systemctl enable "mc-$1.service"
     systemctl start "mc-$1.service"
     echo "mc-$1.service started!"
   else
-    echo "mc-$1.service does not exist or not enabled!"
+    echo "mc-$1.service does not exist!"
   fi
 }
 
@@ -98,7 +106,13 @@ stopService () {
 }
 
 disableService () {
-  echo "disable"
+  if [ -f "/etc/systemd/system/mc-$1.service" ]; then
+    systemctl stop "mc-$1.service"
+    systemctl disable "mc-$1.service"
+    echo "mc-$1.service disabled!"
+  else
+    echo "mc-$1.service does not exist! Nothing to do here."
+  fi
 }
 
 listService () {
@@ -153,6 +167,10 @@ fi
 
 if [[ $* == *-stop* ]]; then
   iterateOverServers stopService $1
+fi
+
+if [[ $* == *-disable* ]]; then
+  iterateOverServers disableService $1
 fi
 
 if [[ $* == *-list* ]]; then
